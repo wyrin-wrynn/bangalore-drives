@@ -79,10 +79,11 @@ streamlit run app.py
 
 Your browser opens on `http://localhost:8501`. Upload the `.json` or `.zip` and press **Process**.
 
-- Snapping trips to roads takes a few minutes: roughly 5-15 minutes for several years of history on a
-  laptop (about 2 GB of RAM). Tick **Fast mode** to halve it.
-- Results are saved under `output/`, so next time pick the processed export from the sidebar instead of
-  uploading again.
+- Snapping trips to roads is the slow part: a few minutes for a year or two of history, about 20 minutes
+  for 10+ years (7,000 trips) on a laptop, using about 1-2 GB of RAM. Tick **Fast mode** to halve it.
+- When it finishes, the results open by themselves. Next time they are listed in the sidebar, so there is no
+  need to upload again.
+- Results are saved under `output/` (the uploaded file itself is deleted after processing).
 - Sidebar filters: include motorbike trips, leave out airport rides on flight days, year range.
 - Tabs: **Overview**, **Year by year**, **Map** (downloadable PNG), **Speed map**, **Video** (render, then
   pick Reddit / WhatsApp / HQ, render, then download the MP4).

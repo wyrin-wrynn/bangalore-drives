@@ -72,10 +72,14 @@ def process(upload, fast):
 st.sidebar.title("🚗 Bangalore drives")
 previous = runs()
 db = None
+NEW = "(upload a new one)"
 if previous:
     labels = {str(p): f"{p.parent.name}  ({pd.Timestamp(p.stat().st_mtime, unit='s'):%d %b %H:%M})" for p in previous}
-    pick = st.sidebar.selectbox("Processed exports", ["(upload a new one)"] + list(labels), format_func=lambda k: labels.get(k, k))
-    if pick != "(upload a new one)":
+    options = list(labels) + [NEW]          # newest processed export first, so results open by default
+    picked = st.session_state.get("picked")
+    pick = st.sidebar.selectbox("Processed exports", options, index=options.index(picked) if picked in options else 0,
+                                format_func=lambda k: labels.get(k, k))
+    if pick != NEW:
         db = pick
 
 if db is None:
@@ -86,7 +90,7 @@ if db is None:
     upload = st.file_uploader("Timeline export", type=["json", "zip"])
     fast = st.checkbox("Fast mode (one matching pass, about 2x quicker, slightly less accurate route choice)")
     if upload and st.button("Process", type="primary"):
-        db = str(process(upload, fast))
+        st.session_state["picked"] = str(process(upload, fast))   # open the results right away
         st.rerun()
     st.stop()
 
