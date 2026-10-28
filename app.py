@@ -207,7 +207,10 @@ with tabs[4]:
                     format_func={"full": "Greater Bangalore", "core": "City core (zoomed in)"}.get)
     vid = Path(db).parent / f"drives_{tag}_{preset}_{area}.mp4"
     if vid.exists():
-        st.video(str(vid))
+        if render.PRESETS[preset]["height"]:          # portrait: keep it phone-sized
+            st.columns([1, 1, 1])[1].video(str(vid))
+        else:
+            st.video(str(vid))
         st.download_button("Download MP4", vid.read_bytes(), file_name="bangalore_drives.mp4", mime="video/mp4")
     elif st.button("Render video", type="primary"):
         bar = st.progress(0.0)

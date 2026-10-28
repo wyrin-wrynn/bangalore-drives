@@ -132,17 +132,17 @@ def image(G, trips, tv, out, width=3000, title="Every drive in Bangalore"):
     d = ImageDraw.Draw(img)
     pad, s = view.W // 40, view.W // 60
     fb, fm = font(view.W // 34, True), font(view.W // 62)
-    km = trips.matched_m.sum() / 1000
+    mv = tv[~tv.stop.astype(bool)]              # same basis as the stats: moving legs only
     d.text((pad, pad), title, font=fb, fill=(240, 240, 245))
-    d.text((pad, pad + view.W // 26), f"{tv.date.min()[:4]} to {tv.date.max()[:4]}   ·   {len(trips):,} trips   ·   "
-           f"{km:,.0f} km on {tv.edge.nunique():,} road segments", font=fm, fill=(170, 175, 190))
+    d.text((pad, pad + view.W // 26), f"{tv.date.min()[:4]} to {tv.date.max()[:4]}   ·   {mv.trip_id.nunique():,} trips   ·   "
+           f"{mv.length_m.sum() / 1000:,.0f} km on {tv.edge.nunique():,} road segments", font=fm, fill=(170, 175, 190))
     y = view.H - pad - 2.4 * s
     for kind, colour in (("car", (255, 160, 40)), ("bike", (40, 200, 210))):
-        t = trips[trips.kind == kind]
-        if len(t):
+        k = mv[mv.kind == kind]
+        if len(k):
             d.rounded_rectangle([pad, y + s * .25, pad + s * 1.6, y + s * .55], radius=s * .15, fill=colour)
-            d.text((pad + s * 2, y), f"{'car' if kind == 'car' else 'motorbike'}  {len(t):,} trips, "
-                   f"{t.matched_m.sum() / 1000:,.0f} km", font=fm, fill=(225, 225, 232))
+            d.text((pad + s * 2, y), f"{'car' if kind == 'car' else 'motorbike'}  {k.trip_id.nunique():,} trips, "
+                   f"{k.length_m.sum() / 1000:,.0f} km", font=fm, fill=(225, 225, 232))
             y += 1.3 * s
     d.text((view.W - pad, view.H - pad - 1.1 * s), "brighter = driven more often   ·   map data © OpenStreetMap",
            font=fm, fill=(130, 135, 150), anchor="ra")

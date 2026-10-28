@@ -39,6 +39,7 @@ def summary(trips, tv):
     bands = pd.DataFrame({
         "share of driving time %": mv.groupby(band, observed=False).secs.sum() / mv.secs.sum() * 100,
         "share of distance %": mv.groupby(band, observed=False).length_m.sum() / mv.length_m.sum() * 100}).round(1)
+    bands.index.name = "speed (km/h)"
     wd = mv[~mv.weekday.isin(["Saturday", "Sunday"])]
     by_hour = wd.groupby(wd.hour.astype(int)).apply(kmh, include_groups=False).rename("km/h (weekdays)")
     by_hour = by_hour[wd.groupby(wd.hour.astype(int)).trip_id.nunique() >= 20]   # skip thin hours
@@ -49,6 +50,7 @@ def summary(trips, tv):
     by_year = mv.groupby("year").apply(lambda g: pd.Series({
         "trips": g.trip_id.nunique(), "km": g.length_m.sum() / 1000, "hours": g.secs.sum() / 3600, "avg km/h": kmh(g)}),
         include_groups=False).round(1)
+    by_year.index = by_year.index.astype(str)          # plain years on chart axes, not 2,013
     by_month = mv.assign(ym=mv.date.str.slice(0, 7)).groupby("ym").length_m.sum().div(1000).round(0).rename("km")
     by_weekday = mv.groupby("weekday").apply(kmh, include_groups=False).reindex(WEEKDAYS).rename("km/h")
     by_kind = mv.groupby("kind").apply(lambda g: pd.Series({
