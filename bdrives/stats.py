@@ -42,7 +42,9 @@ def summary(trips, tv):
     bands.index.name = "speed (km/h)"
     wd = mv[~mv.weekday.isin(["Saturday", "Sunday"])]
     by_hour = wd.groupby(wd.hour.astype(int)).apply(kmh, include_groups=False).rename("km/h (weekdays)")
-    by_hour = by_hour[wd.groupby(wd.hour.astype(int)).trip_id.nunique() >= 20]   # skip thin hours
+    # skip thin hours; the bar scales with history size (3 trips for a month, 20 for years of data)
+    min_trips = int(np.clip(per_trip.shape[0] // 300, 3, 20))
+    by_hour = by_hour[wd.groupby(wd.hour.astype(int)).trip_id.nunique() >= min_trips]
     roads = mv.assign(road=mv.highway.str.replace("_link", "").map(ROAD_CLASS).fillna("other"))
     by_road = roads.groupby("road").apply(lambda g: pd.Series({
         "km": g.length_m.sum() / 1000, "avg km/h": kmh(g), "share of km %": g.length_m.sum() / mv.length_m.sum() * 100}),

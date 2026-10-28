@@ -1,6 +1,6 @@
 {
   "name": "bangalore-drives",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Analyse your Google Maps Timeline export: clean the GPS, snap car and bike trips to Bangalore's roads, and get speed stats, maps and a time-lapse video. Runs locally.",
   "author": {
     "name": "wyrin-wrynn",
