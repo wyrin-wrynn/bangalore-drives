@@ -71,6 +71,8 @@ def load_traces(con, modes, bbox=C.BBOX):
                     f"FROM activities WHERE mode IN ({','.join('?' * len(modes))})", con, params=list(modes))
     inb = lambda la, ln: la.between(lat0, lat1) & ln.between(lng0, lng1)
     a = a[inb(a.start_lat, a.start_lng) & inb(a.end_lat, a.end_lng)].sort_values("t").reset_index(drop=True)
+    if a.empty:                   # e.g. no motorbike trips at all
+        return
     p = pd.read_sql("SELECT t, lat, lng FROM path_points", con)
     try:
         r = pd.read_sql("SELECT t, lat, lng FROM raw_positions WHERE accuracy_m <= 30", con)
@@ -215,8 +217,11 @@ def run(db, bikes=True, passes=2, graph=C.GRAPH, progress=None):
             factor = np.ones(len(G.u))
             used, cnt = np.array(list(usage)), np.array(list(usage.values()))
             factor[used] = np.maximum(C.HABIT_MIN, 1 / (1 + 0.3 * np.log1p(cnt)))
+    if not jobs:
+        con.close()
+        raise SystemExit("No car or motorbike trips inside Greater Bangalore were found in this export.")
     trips = pd.DataFrame(trips)
-    trips["airport_cab"] = airport_cabs(con, trips) & (trips.kind == "car") if len(trips) else []
+    trips["airport_cab"] = airport_cabs(con, trips) & (trips.kind == "car")
     tv = pd.DataFrame(rows, columns=["kind", "trip_id", "edge", "t_enter", "secs", "leg_kmh", "stop"])
     loc = pd.to_datetime(tv.t_enter, unit="s", utc=True)
     # local time: use each trip's own UTC offset from its ISO start time

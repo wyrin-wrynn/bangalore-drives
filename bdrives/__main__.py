@@ -68,7 +68,7 @@ def main():
         print(f"Reading {args.timeline} ...")
         counts = load(args.timeline, db)
         print("  " + ", ".join(f"{v:,} {k.replace('_', ' ')}" for k, v in counts.items()))
-        print("Matching trips to roads (single process; ~2-15 min depending on history and machine)")
+        print("Matching trips to roads (single process; a few minutes for a year or two, ~20 min for 10+ years)")
         match.run(db, bikes=not args.no_bikes, passes=1 if args.fast else 2, progress=_progress)
         print(f"Done in {time.time() - t0:.0f}s")
         args.cmd = "image+report"

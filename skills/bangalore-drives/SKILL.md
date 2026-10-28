@@ -20,21 +20,30 @@ Turns a Google Maps Timeline export into road-level driving data for Bangalore, 
 
 ## Setup (once)
 
+Create a private environment in the plugin's data folder (it survives plugin updates):
+
 ```bash
 python3 -m venv "${CLAUDE_PLUGIN_DATA}/venv"
 "${CLAUDE_PLUGIN_DATA}/venv/bin/pip" install -q -r "${CLAUDE_PLUGIN_ROOT}/requirements.txt"
 ```
 
-Use `"${CLAUDE_PLUGIN_DATA}/venv/bin/python"` below (call it `PY`). Run commands with
-`PYTHONPATH="${CLAUDE_PLUGIN_ROOT}"` so `python -m bdrives` resolves. Video needs `ffmpeg` on the PATH
-(`apt install ffmpeg`, `brew install ffmpeg`, `winget install ffmpeg`); everything else does not.
+Then `PY="${CLAUDE_PLUGIN_DATA}/venv/bin/python"`. Platform notes:
+
+- **Windows**: use `py -m venv "%CLAUDE_PLUGIN_DATA%\venv"` and `PY=%CLAUDE_PLUGIN_DATA%\venv\Scripts\python.exe`.
+- **Ubuntu / Debian**: if venv creation fails with "ensurepip is not available", the system needs
+  `sudo apt install python3-venv`. Ask the user before installing anything system-wide.
+- Python 3.10+ is required. Video also needs `ffmpeg` on the PATH (`apt install ffmpeg`,
+  `brew install ffmpeg`, `winget install ffmpeg`); everything else works without it.
+
+Always run from the **user's working directory** (not the plugin folder), with
+`PYTHONPATH="${CLAUDE_PLUGIN_ROOT}"` so `-m bdrives` resolves. Outputs then land in the user's folder.
 
 ## Run
 
 1. Find the export. Ask the user for the path if it is not obvious. It is usually `Timeline.json`
    (or a `.zip`) in Downloads. If they have not exported yet, point them to the README section
    "Get your data out of your phone".
-2. Process it (single process; ~5-15 min for several years of data, `--fast` halves it):
+2. Process it (single process; a few minutes for a year or two, ~20 min for 10+ years, `--fast` halves it):
    ```bash
    PYTHONPATH="${CLAUDE_PLUGIN_ROOT}" $PY -m bdrives run "<path to Timeline.json or .zip>" --out bangalore-drives-output
    ```
@@ -44,8 +53,14 @@ Use `"${CLAUDE_PLUGIN_DATA}/venv/bin/python"` below (call it `PY`). Run commands
    The map image is `bangalore-drives-output/map.png`; offer to open it.
 4. Optional: `report`, `image`, `video` subcommands re-run with filters:
    `--no-bikes`, `--keep-airport-cabs`, `--years 2019-2026`; video takes `--size 1080 --seconds 60`.
-5. For an interactive UI: `cd "${CLAUDE_PLUGIN_ROOT}" && $PY -m streamlit run app.py`
-   (binds to localhost only).
+5. For an interactive UI, run from the user's working directory (results go to `./output/`):
+   ```bash
+   PYTHONPATH="${CLAUDE_PLUGIN_ROOT}" $PY -m streamlit run "${CLAUDE_PLUGIN_ROOT}/app.py" \
+       --server.address localhost --server.maxUploadSize 1024 --browser.gatherUsageStats false
+   ```
+   Keep the flags: they bind the app to this machine only and allow uploads up to 1 GB (Streamlit's
+   own config file is not read when starting outside the repo folder). Run it in the background and
+   give the user the URL it prints.
 
 ## Answering follow-up questions
 

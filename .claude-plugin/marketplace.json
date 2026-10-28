@@ -1,6 +1,10 @@
 {
   "name": "bangalore-drives",
-  "owner": { "name": "wyrin-wrynn", "url": "https://github.com/wyrin-wrynn" },
+  "description": "Turn your Google Maps Timeline export into Bangalore driving stats, glow maps and a time-lapse video. Runs locally.",
+  "owner": {
+    "name": "wyrin-wrynn",
+    "url": "https://github.com/wyrin-wrynn"
+  },
   "plugins": [
     {
       "name": "bangalore-drives",
