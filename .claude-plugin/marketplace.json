@@ -1,0 +1,11 @@
+{
+  "name": "bangalore-drives",
+  "owner": { "name": "wyrin-wrynn", "url": "https://github.com/wyrin-wrynn" },
+  "plugins": [
+    {
+      "name": "bangalore-drives",
+      "source": "./",
+      "description": "Google Maps Timeline -> Bangalore driving stats, glow maps and time-lapse video, all local."
+    }
+  ]
+}

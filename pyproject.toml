@@ -1,0 +1,28 @@
+[project]
+name = "bangalore-drives"
+version = "0.1.0"
+description = "Your Google Maps Timeline export, cleaned and snapped to Bangalore's roads: maps, speed stats and a time-lapse video. Runs locally."
+readme = "README.md"
+license = { text = "MIT (code); road data © OpenStreetMap contributors, ODbL" }
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+    "pillow>=10.1",
+    "tabulate>=0.9",
+    "streamlit>=1.40",
+    "pydeck>=0.9",
+]
+
+[project.optional-dependencies]
+build-graph = ["osmium>=3.7"]
+
+[project.scripts]
+bdrives = "bdrives.__main__:main"
+
+[tool.setuptools]
+packages = ["bdrives"]
+
+[tool.setuptools.package-data]
+bdrives = ["data/*.npz"]

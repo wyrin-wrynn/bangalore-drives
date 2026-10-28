@@ -1,0 +1,7 @@
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+pillow>=10.1
+tabulate>=0.9
+streamlit>=1.40
+pydeck>=0.9

@@ -1,0 +1,11 @@
+[server]
+# your location history is processed locally; only this machine can reach the app
+address = "localhost"
+maxUploadSize = 1024
+headless = false
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "dark"

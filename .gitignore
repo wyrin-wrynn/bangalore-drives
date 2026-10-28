@@ -1,0 +1,18 @@
+# your data never goes in the repo
+output/
+*.db
+*.json
+!.claude-plugin/*.json
+*.zip
+*.mp4
+*.gif
+data/osm/
+*.osm.pbf
+
+# python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
